@@ -75,3 +75,4 @@ export default function PortableText({ value }: PortableTextProps) {
   
   // Теперь TypeScript видит, что value соответствует ожиданиям PT
   return <PT value={value} components={components} />;
+}
