@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+// 1. Добавлен useEffect
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,7 +15,8 @@ const schema = z.object({
   comment: z.string().optional(),
 });
 
-type FormData = z.infer<typeof schema>;
+// 2. Переименовал тип в FormValues, чтобы не конфликтовать с браузерным FormData
+type FormValues = z.infer<typeof schema>;
 
 interface ConsultationFormProps {
   defaultService?: string;
@@ -31,21 +33,23 @@ export default function ConsultationForm({
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-  } = useForm<FormData>({
+  } = useForm<FormValues>({ // используем новое имя типа здесь
     resolver: zodResolver(schema),
     defaultValues: {
       service: defaultService ?? "",
     },
   });
 
+  // Теперь useEffect будет работать
   useEffect(() => {
     if (defaultService) setValue("service", defaultService);
   }, [defaultService, setValue]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: FormValues) => {
     setError(null);
     try {
-      const formData = new FormData();
+      // Теперь браузерный FormData не конфликтует с типом
+      const formData = new window.FormData(); 
       formData.append("name", data.name);
       formData.append("email", data.email);
       formData.append("phone", data.phone);
@@ -66,6 +70,7 @@ export default function ConsultationForm({
     }
   };
 
+  // ... остальной код рендеринга (return) остается без изменений
   if (submitted) {
     return (
       <div className="mt-12 rounded-2xl bg-primary-50 p-8 text-center">
