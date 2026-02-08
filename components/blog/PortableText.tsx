@@ -1,6 +1,8 @@
 "use client";
 
 import { PortableText as PT, type PortableTextComponents } from "@portabletext/react";
+// Добавляем импорт типа для данных
+import type { TypedObject } from "@portabletext/types";
 
 const components: PortableTextComponents = {
   block: {
@@ -62,11 +64,14 @@ const components: PortableTextComponents = {
   },
 };
 
+// Исправляем интерфейс: меняем unknown на массив объектов Sanity
 interface PortableTextProps {
-  value: unknown;
+  value?: TypedObject | TypedObject[];
 }
 
 export default function PortableText({ value }: PortableTextProps) {
+  // Проверка на пустоту теперь работает корректно с точки зрения типов
   if (!value) return null;
+  
+  // Теперь TypeScript видит, что value соответствует ожиданиям PT
   return <PT value={value} components={components} />;
-}
