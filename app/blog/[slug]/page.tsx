@@ -7,6 +7,8 @@ import {
   postSlugsQuery,
 } from "@/lib/sanity";
 import PortableText from "@/components/blog/PortableText";
+// 1. Добавляем импорт типа
+import type { TypedObject } from "@portabletext/types";
 
 async function getPost(slug: string) {
   if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) return null;
@@ -17,7 +19,8 @@ async function getPost(slug: string) {
       slug: { current: string };
       excerpt?: string;
       publishedAt?: string;
-      body?: unknown;
+      // 2. Меняем unknown на корректный тип
+      body?: TypedObject | TypedObject[];
       mainImage?: string;
     } | null>(postBySlugQuery, { slug });
   } catch {
@@ -78,6 +81,7 @@ export default async function BlogPostPage({
           </div>
         )}
         <div className="mt-8">
+          {/* Теперь здесь не будет ошибки, так как типы совпадают */}
           <PortableText value={post.body} />
         </div>
       </article>
